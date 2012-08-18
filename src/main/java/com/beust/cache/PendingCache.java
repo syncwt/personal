@@ -12,6 +12,17 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * A cache that guarantees that the loading callable is only called once per key. This
+ * is useful for example when you have multiple threads trying to fetch the same URL at
+ * about the same time and you only want one network access to happen. This cache will call
+ * the loading callable for the first key it sees and then makes all the other gets of that
+ * same key wait(). When the first callable returns, the waiting threads are notified that
+ * they can now proceed to retrieve that value from the cache. Once the callable has
+ * returned, getting a key from this cache is similar to regular caches.
+ *
+ * @author Cedric Beust <cedric@beust.com>
+ */
 public class PendingCache<K, V> {
 
   private Cache<K, V> cache;
@@ -21,10 +32,6 @@ public class PendingCache<K, V> {
   public PendingCache() {
     p("Creating PendingCache");
     this.cache = CacheBuilder.newBuilder().build();
-  }
-
-  private static void p(String string) {
-    System.out.println(Thread.currentThread().getId() + " [PendingCache] " + string);
   }
 
   public V get(final K key, Callable<V> callable) throws ExecutionException {
@@ -103,5 +110,9 @@ public class PendingCache<K, V> {
       }
       l.add(object);
     }
+  }
+
+  private static void p(String string) {
+    System.out.println(Thread.currentThread().getId() + " [PendingCache] " + string);
   }
 }
