@@ -1,15 +1,20 @@
 package com.beust;
 
 import com.google.inject.Binder;
+import com.google.inject.Binding;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInjectBinding;
+import com.google.inject.assistedinject.AssistedInjectTargetVisitor;
+import com.google.inject.assistedinject.AssistedMethod;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
+import com.google.inject.spi.DefaultBindingTargetVisitor;
 
 @Singleton
 class Data {
@@ -90,6 +95,31 @@ public class AssistedTest {
         Injector injector = Guice.createInjector(module);
 
         injector.getInstance(AssistedTest.class).run();
+        displayBindings(injector);
     }
 
+    static class Visitor extends DefaultBindingTargetVisitor<Object, Void> implements
+            AssistedInjectTargetVisitor<Object, Void> {
+
+        @Override
+        public Void visit(AssistedInjectBinding<?> binding) {
+            // Loop over each method in the factory...
+            for (AssistedMethod method : binding.getAssistedMethods()) {
+                System.out.println("Non-assisted Dependencies: "
+                        + method.getDependencies() + ", Factory Method: "
+                        + method.getFactoryMethod()
+                        + ", Implementation Constructor: "
+                        + method.getImplementationConstructor()
+                        + ", Implementation Type: "
+                        + method.getImplementationType());
+            }
+            return null;
+        }
+    }
+
+    private static void displayBindings(Injector injector) {
+        Binding<IPersonFactory> binding = injector.getBinding(IPersonFactory.class);
+        binding.acceptTargetVisitor(new Visitor());
+
+   }
 }
