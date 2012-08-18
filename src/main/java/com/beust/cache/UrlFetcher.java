@@ -1,13 +1,17 @@
 package com.beust.cache;
 
+import com.google.common.io.Resources;
+
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.concurrent.Callable;
 
 public class UrlFetcher implements Callable<String> {
 
   private String url;
-  private PendingCache cache;
+  private PendingCache<String, String> cache;
 
-  public UrlFetcher(String url, PendingCache cache) {
+  public UrlFetcher(String url, PendingCache<String, String> cache) {
     this.url = url;
     this.cache = cache;
   }
@@ -17,8 +21,8 @@ public class UrlFetcher implements Callable<String> {
     Callable<String> callable = new Callable<String>() {
       @Override
       public String call() throws Exception {
-        String result = new MyUrl(url).getContent();
-        return result;
+        p("Fetching: " + url + " (should only happen once per url)");
+        return Resources.toString(new URL(url), Charset.defaultCharset());
       }
     };
 

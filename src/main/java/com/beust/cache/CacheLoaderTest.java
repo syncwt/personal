@@ -1,5 +1,6 @@
 package com.beust.cache;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -12,17 +13,19 @@ import java.util.concurrent.Future;
 
 public class CacheLoaderTest {
   private void run() throws ExecutionException, InterruptedException {
-    PendingCache wc = new PendingCache();
-    String url = "http://twitter.com/cbeust";
-    ExecutorService executor = Executors.newFixedThreadPool(5);
+    PendingCache<String, String> wc = new PendingCache<String, String>();
+    List<String> urls = ImmutableList.of("http://twitter.com/cbeust", "http://google.com");
+    ExecutorService executor = Executors.newFixedThreadPool(2);
     CompletionService<String> ecs = new ExecutorCompletionService<String>(executor);
-    int n = 20;
-    for (int i = 0; i < n; i++) {
-      UrlFetcher uf = new UrlFetcher(url, wc);
-      ecs.submit(uf);
+    int n = 5;
+    for (String url : urls) {
+      for (int i = 0; i < n; i++) {
+        UrlFetcher uf = new UrlFetcher(url, wc);
+        ecs.submit(uf);
+      }
     }
     List<String> results = Lists.newArrayList();
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n * urls.size(); i++) {
       Future<String> t = ecs.take();
       results.add(t.get());
     }

@@ -12,14 +12,14 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 
-public class PendingCache {
+public class PendingCache<K, V> {
 
-  private Cache<String, String> cache;
-  private Set<String> pendingKeys = Sets.newHashSet();
-  private ConcurrentMap<String, List<Object>> waitingThreads = Maps.newConcurrentMap();
+  private Cache<K, V> cache;
+  private Set<K> pendingKeys = Sets.newHashSet();
+  private ConcurrentMap<K, List<Object>> waitingThreads = Maps.newConcurrentMap();
 
   public PendingCache() {
-    p("Creating WaitCache");
+    p("Creating PendingCache");
     this.cache = CacheBuilder.newBuilder().build();
   }
 
@@ -27,10 +27,10 @@ public class PendingCache {
     System.out.println(Thread.currentThread().getId() + " [PendingCache] " + string);
   }
 
-  public String get(final String key, Callable<String> callable) throws ExecutionException {
+  public V get(final K key, Callable<V> callable) throws ExecutionException {
     p("get() on key:" + key + " pending:" + pendingKeys
         + " inCache:" + (cache.getIfPresent(key) != null));
-    String result = cache.getIfPresent(key);
+    V result = cache.getIfPresent(key);
     if (result != null) {
       return result;
     }
@@ -61,45 +61,45 @@ public class PendingCache {
     return result;
   }
 
-  private void wakeUpThreads(String url) {
+  private void wakeUpThreads(K key) {
     synchronized(waitingThreads) {
-      List<Object> objects = waitingThreads.get(url);
+      List<Object> objects = waitingThreads.get(key);
       if (objects != null) {
-        p("Notifying " + objects.size() + " threads");
+        p("Notifying " + objects.size() + " threads for key " + key);
         for (Object object : objects) {
           synchronized(object) {
             object.notify();
           }
         }
-        waitingThreads.remove(url);
+        waitingThreads.remove(key);
       } else {
         p("No threads to notify");
       }
     }
   }
 
-  synchronized private void addToPending(String url) {
-    if (pendingKeys.contains(url)) {
+  synchronized private void addToPending(K key) {
+    if (pendingKeys.contains(key)) {
       System.out.println("Adding to pending twice");
       throw new IllegalArgumentException("Should not happen");
     }
-    pendingKeys.add(url);
+    pendingKeys.add(key);
   }
 
-  synchronized private void removeFromPending(String url) {
-    pendingKeys.remove(url);
+  synchronized private void removeFromPending(K key) {
+    pendingKeys.remove(key);
   }
 
-  synchronized private boolean isPending(String url) {
-    return pendingKeys.contains(url);
+  synchronized private boolean isPending(K key) {
+    return pendingKeys.contains(key);
   }
 
-  private void addToWaiting(String url, Object object) {
+  private void addToWaiting(K key, Object object) {
     synchronized(waitingThreads) {
-      List<Object> l = waitingThreads.get(url);
+      List<Object> l = waitingThreads.get(key);
       if (l == null) {
         l = Lists.newArrayList();
-        waitingThreads.put(url, l);
+        waitingThreads.put(key, l);
       }
       l.add(object);
     }
