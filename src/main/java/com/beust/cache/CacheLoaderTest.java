@@ -1,9 +1,16 @@
 package com.beust.cache;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.io.Resources;
 
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
@@ -12,16 +19,34 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class CacheLoaderTest {
-  private void run() throws ExecutionException, InterruptedException {
-    PendingCache<String, String> wc = new PendingCache<String, String>();
+  private void runRegularCache() throws InterruptedException, ExecutionException {
+    final LoadingCache<String, String> rc = CacheBuilder.newBuilder().build(
+        new CacheLoader<String, String>() {
+          @Override
+          public String load(String url) throws Exception {
+            p("Fetching: " + url + " (should only happen once per url)");
+            return Resources.toString(new URL(url), Charset.defaultCharset());
+          }
+        });
+    runCaches(rc);
+  }
+
+  private void runCaches(final LoadingCache<String, String> rc)
+      throws InterruptedException, ExecutionException {
     List<String> urls = ImmutableList.of("http://twitter.com/cbeust", "http://google.com");
-    ExecutorService executor = Executors.newFixedThreadPool(2);
+    ExecutorService executor = Executors.newFixedThreadPool(3);
     CompletionService<String> ecs = new ExecutorCompletionService<String>(executor);
     int n = 5;
-    for (String url : urls) {
+    for (final String url : urls) {
       for (int i = 0; i < n; i++) {
-        UrlFetcher uf = new UrlFetcher(url, wc);
-        ecs.submit(uf);
+        Callable<String> callable = new Callable<String>() {
+          @Override
+          public String call() throws Exception {
+            p("Getting value from cache " + url);
+            return rc.get(url);
+          }
+        };
+        ecs.submit(callable);
       }
     }
     List<String> results = Lists.newArrayList();
@@ -34,10 +59,10 @@ public class CacheLoaderTest {
   }
 
   private void p(String string) {
-    System.out.println(Thread.currentThread().getId() + " [CacheLoaderTets] " + string);
+    System.out.println(Thread.currentThread().getId() + " [CacheLoaderTest] " + string);
   }
 
   public static void main(String[] args) throws ExecutionException, InterruptedException {
-    new CacheLoaderTest().run();
+    new CacheLoaderTest().runRegularCache();
   }
 }
