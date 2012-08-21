@@ -2,6 +2,7 @@ package com.beust.cache;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.CacheStats;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -20,15 +21,19 @@ import java.util.concurrent.Future;
 
 public class CacheLoaderTest {
   private void runRegularCache() throws InterruptedException, ExecutionException {
-    final LoadingCache<String, String> rc = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, String>() {
-          @Override
-          public String load(String url) throws Exception {
-            p("Fetching: " + url + " (should only happen once per url)");
-            return Resources.toString(new URL(url), Charset.defaultCharset());
-          }
-        });
+    final LoadingCache<String, String> rc = CacheBuilder.newBuilder()
+        .recordStats()
+        .build(
+            new CacheLoader<String, String>() {
+              @Override
+              public String load(String url) throws Exception {
+                p("Fetching: " + url + " (should only happen once per url)");
+                return Resources.toString(new URL(url), Charset.defaultCharset());
+              }
+            });
     runCaches(rc);
+    CacheStats stats = rc.stats();
+    p("Cache stats:" + stats);
   }
 
   private void runCaches(final LoadingCache<String, String> rc)
@@ -36,9 +41,9 @@ public class CacheLoaderTest {
     List<String> urls = ImmutableList.of("http://twitter.com/cbeust", "http://google.com");
     ExecutorService executor = Executors.newFixedThreadPool(3);
     CompletionService<String> ecs = new ExecutorCompletionService<String>(executor);
-    int n = 5;
+    int workerCount = 5;
     for (final String url : urls) {
-      for (int i = 0; i < n; i++) {
+      for (int i = 0; i < workerCount; i++) {
         Callable<String> callable = new Callable<String>() {
           @Override
           public String call() throws Exception {
@@ -50,7 +55,7 @@ public class CacheLoaderTest {
       }
     }
     List<String> results = Lists.newArrayList();
-    for (int i = 0; i < n * urls.size(); i++) {
+    for (int i = 0; i < workerCount * urls.size(); i++) {
       Future<String> t = ecs.take();
       results.add(t.get());
     }
