@@ -1,4 +1,4 @@
-package com.beust;
+package com.beust.inject;
 
 import com.google.inject.Binder;
 import com.google.inject.Guice;
@@ -11,11 +11,11 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 public class Person {
   private String name;
-  private Address address;
+  private String address;
   private GeoService geoService;
 
   @Inject
-  public Person(@Assisted String name, @Assisted Address address,
+  public Person(@Assisted("name") String name, @Assisted("address") String address,
       GeoService geoService, PersonFactory pf) {
     this.name = name;
     this.address = address;
@@ -26,7 +26,7 @@ public class Person {
     return geoService.livesNear(address, person.getAddress(), 10);
   }
 
-  private Address getAddress() {
+  private String getAddress() {
     return address;
   }
 
@@ -42,8 +42,8 @@ public class Person {
 
     Injector injector = Guice.createInjector(module1, module2);
     PersonFactory pf = injector.getInstance(PersonFactory.class);
-    Person p1 = pf.create("Alfred", new Address());
-    Person p2 = pf.create("Bob", new Address());
+    Person p1 = pf.create("Alfred", "1 a st");
+    Person p2 = pf.create("Bob", "2 b st");
     p1.livesNearby(p2);
   }
 }
@@ -52,16 +52,16 @@ class Address {
 }
 
 interface PersonFactory {
-  Person create(String name, Address address);
+  Person create(@Assisted("name") String name, @Assisted("address") String address);
 }
 
 interface GeoService {
-  boolean livesNear(Address address1, Address address2, int miles);
+  boolean livesNear(String address1, String address2, int miles);
 }
 
 class GeoServiceImpl implements GeoService {
   @Override
-  public boolean livesNear(Address address1, Address address2, int miles) {
+  public boolean livesNear(String address1, String address2, int miles) {
     System.out.println("GeoService.livesNear(" + address1 + ", " + address2 + ")");
     return true;
   }
