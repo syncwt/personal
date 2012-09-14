@@ -4,7 +4,6 @@ import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 public class Main {
@@ -30,6 +29,6 @@ public class Main {
   BaseFactory f;
 
   private void run() {
-    System.out.println("Running a1: " + f.create1(new TypeLiteral<A1>(){}, "a1"));// + " a2:" + f.create1("a2"));
+    System.out.println("Running a1: " + f.create1("a1"));// + " a2:" + f.create1("a2"));
   }
 }

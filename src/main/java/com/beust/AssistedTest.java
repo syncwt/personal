@@ -45,21 +45,21 @@ class BasePerson implements IPerson {
 
 class Adult extends BasePerson {
     @Inject
-    public Adult(@Assisted String name, Data data) {
-        super(name + " (adult)", data);
+    public Adult(@Assisted("name") String name, @Assisted("nick") String nickName, Data data) {
+        super(name + " nick:" + nickName + " (adult)", data);
     }
 }
 
 class Child extends BasePerson {
     @Inject
-    public Child(@Assisted String name, Data data) {
-        super(name + " (child)", data);
+    public Child(@Assisted("name") String name, @Assisted("nick") String nickName, Data data) {
+        super(name + " nick:" + nickName + " (child)", data);
     }
 }
 
 interface IPersonFactory {
-    public @Named("adult") IPerson createAdult(String name);
-    public @Named("child") IPerson createChild(String name);
+    public @Named("adult") IPerson createAdult(@Assisted("name") String name, @Assisted("nick") String nick);
+    public @Named("child") IPerson createChild(@Assisted("name") String name, @Assisted("nick") String nick);
 }
 
 /**
@@ -73,9 +73,9 @@ public class AssistedTest {
     private IPersonFactory factory;
 
     private void run() {
-        System.out.println(factory.createAdult("Cedric").getName());
-        System.out.println(factory.createAdult("Alois").getName());
-        System.out.println(factory.createChild("Christopher").getName());
+        System.out.println(factory.createAdult("Cedric", "foo").getName());
+        System.out.println(factory.createAdult("Alois", "bar").getName());
+        System.out.println(factory.createChild("Christopher", "baz").getName());
     }
 
     public static void main(String[] args) {
