@@ -1,5 +1,13 @@
 package com.beust;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
 import com.google.common.base.Ticker;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
@@ -7,14 +15,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+@Test(enabled = false)
 public class SlidingWindowMapTest {
   private final static List<String> KEYS = ImmutableList.of("a", "b", "c", "d");
   private static final int MAX_ENTRIES = 50;
@@ -48,7 +49,6 @@ public class SlidingWindowMapTest {
     }
   }
 
-  @Test
   public void t1() throws InterruptedException {
     Multimap<String, String> mm = ArrayListMultimap.create();
     for (int i = 0; i < CALLS; i++) {
