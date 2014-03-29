@@ -1,0 +1,7 @@
+RULE log
+CLASS InputStream
+METHOD read
+AT EXIT
+IF true
+DO traceln("read," + $!)
+ENDRULE
