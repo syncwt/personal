@@ -1,0 +1,15 @@
+RULE trace main entry
+CLASS AppMain
+METHOD loadImage
+AT ENTRY
+IF true
+DO traceln("### entering loadImage")
+ENDRULE
+ 
+RULE trace main exit
+CLASS AppMain
+METHOD main
+AT EXIT
+IF true
+DO traceln("###exiting main")
+ENDRULE
