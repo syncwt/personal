@@ -1,4 +1,4 @@
-package com.beust;
+package com.beust.ray;
 
 import java.awt.FlowLayout;
 import java.awt.image.BufferedImage;
