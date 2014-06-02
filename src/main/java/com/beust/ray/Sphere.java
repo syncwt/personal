@@ -1,11 +1,19 @@
 package com.beust.ray;
 
 public class Sphere {
-    private final Point origin;
+    private final Point center;
     private final double radius;
 
     public Sphere(Point origin, double radius) {
-        this.origin = origin;
+        this.center = origin;
         this.radius = radius;
+    }
+
+    public Point getCenter() {
+        return center;
+    }
+
+    public double getRadius() {
+        return radius;
     }
 }

@@ -9,25 +9,29 @@ import javax.swing.JLabel;
 
 public class Png {
 
-    public static void main(String[] args) {
-        new Png().run();
+    private BufferedImage image;
+    private final int width;
+    private final int height;
+
+    public Png(int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     }
 
-    private static final int WIDTH = 200;
-    private static final int HEIGHT = 200;
+    public void setPoint(int x, int y, int color) {
+        System.out.println("Setting " + x + "," + y);
+        image.setRGB(x, height - 1 - y, color);
+    }
 
-    private void run() {
-        BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
-        for (int i = 0; i < WIDTH; i++) {
-            for (int j = 0; j < HEIGHT; j++) {
-                image.setRGB(i, j, j % 5 == 0 ? 0xffff0000 : 0xff00ff00);
-            }
-        }
-
+    public void display() {
         JFrame frame = new JFrame();
+        frame.setSize(width, height + 50);
         frame.getContentPane().setLayout(new FlowLayout());
-        frame.getContentPane().add(new JLabel(new ImageIcon(image)));
-        frame.pack();
+        JLabel label = new JLabel(new ImageIcon(image));
+//        label.setPreferredSize(new Dimension(width, height));
+        frame.getContentPane().add(label);
+//        frame.pack();
         frame.setVisible(true);
     }
 }
