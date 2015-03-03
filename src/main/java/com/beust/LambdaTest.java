@@ -2,7 +2,6 @@ package com.beust;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -16,10 +15,10 @@ public class LambdaTest {
         Set<Future<Integer>> set = new HashSet<Future<Integer>>();
         for (final String word : strs) {
 
-            Callable<Integer> c = (() -> word.length());
+//            Callable<Integer> c = (() -> word.length());
 
-            Future<Integer> future = pool.submit(c);
-            set.add(future);
+//            Future<Integer> future = pool.submit(c);
+//            set.add(future);
         }
         int sum = 0;
         for (Future<Integer> future : set) {
