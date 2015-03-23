@@ -2,13 +2,11 @@ package com.yahoo.arrow;
 
 import java.util.concurrent.ExecutionException;
 
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.AsyncHttpClientConfig;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketListener;
-import org.asynchttpclient.ws.WebSocketUpgradeHandler;
-
+import com.ning.http.client.AsyncHttpClient;
+import com.ning.http.client.AsyncHttpClientConfig;
+import com.ning.http.client.ws.WebSocket;
+import com.ning.http.client.ws.WebSocketListener;
+import com.ning.http.client.ws.WebSocketUpgradeHandler;
 import com.yahoo.arrow.pb.Chat;
 import com.yahoo.arrow.pb.Chat.PBChatMessageNew;
 import com.yahoo.arrow.pb.Chat.PBChatMessageNew.MessageType;
@@ -68,7 +66,7 @@ public class WebSocketClient {
 //            .setRequestTimeout(1000)
             .setWebSocketTimeout(1000)
             .build();
-    AsyncHttpClient c = new DefaultAsyncHttpClient(config);
+    AsyncHttpClient c = new AsyncHttpClient(config);
     WebSocket websocket = c
         .prepareGet(URL_WEBSOCKET)
         .addHeader("Authorization", "Token token=\"4f15a264178f|a2c3992f2d8d4e608a563a67f1db5982\"")
