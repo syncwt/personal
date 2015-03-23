@@ -1,5 +1,6 @@
 package com.beust.rx;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -18,7 +19,32 @@ public class Rx {
         a.run();
     }
 
-    public void run() throws InterruptedException {
+    public void run() {
+        Observable<Integer> strings = Observable.just(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+
+//        strings.map((Integer n) -> n * 10)
+//            .subscribe((Integer n) ->
+//                System.out.println("Int: " + n));
+        strings
+            .lift(new SlidingWindowOperator(3))
+//            .buffer(3)
+            .subscribe(new Action1<List<Integer>>() {
+                  @Override
+                  public void call(List<Integer> window) {
+                      System.out.println("*** Received window: " + window);
+                  }
+                
+            });
+//                System.out.println("Received window: " + l));
+//            .subscribe(new Action1<List<Integer>>() {
+//                @Override
+//                public void call(List<Integer> window) {
+//                    System.out.println("Received window: " + window);
+//                }
+//            });
+    }
+
+    public void run2() throws InterruptedException {
         Observable<String> s2 = Observable.interval(300, TimeUnit.MILLISECONDS)
               .map(new Func1<Long, String>() {
                   @Override
