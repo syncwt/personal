@@ -27,34 +27,34 @@ public class Main {
         Png png = new Png(DISPLAY.getWidth(), DISPLAY.getHeight());
 //        int x = 50;
 //        int y = 50;
-        for (int x = 0; x < DISPLAY.getWidth(); x++) {
-            for (int y = 0; y < DISPLAY.getHeight(); y++) {
-                Point p = new Point(x, y, 0);
-                int color;
-                if (d(CAMERA, p) > 0) {
-                    Vector lightVector = new Vector(p, LIGHT).normalize();
-                    Vector normalVector = new Vector(SPHERE.getCenter(), p).normalize();
-                    double shade = M.dotProduct(lightVector, normalVector);
-                    System.out.println("Shade: " + shade);
-                    if (shade < 0) {
-                        shade = 0;
-                    }
-                    double objectColor = 255.0;
-                    int c = (int) java.lang.Math.round(objectColor
-                            * (AMBIENT_COEFFICIENT + DIFFUSE_COEFFICIENT * shade));
-                    color = 0xff000000 |
-                            (c << 16) |
-                            (c << 8) |
-                            (c);
-                    String hexColor = Integer.toHexString(color);
-                    System.out.println("Hex: " + hexColor);
-                    System.out.println("");
-                } else {
-                    color = 0xff0000ff;
-                }
-                png.setPoint(x, y, color);
-            }
-        }
+//        for (int x = 0; x < DISPLAY.getWidth(); x++) {
+//            for (int y = 0; y < DISPLAY.getHeight(); y++) {
+//                Point p = new Point(x, y, 0);
+//                int color;
+//                if (d(CAMERA, p) > 0) {
+//                    Vector lightVector = new Vector(p, LIGHT).normalize();
+//                    Vector normalVector = new Vector(SPHERE.getCenter(), p).normalize();
+//                    double shade = M.dotProduct(lightVector, normalVector);
+//                    System.out.println("Shade: " + shade);
+//                    if (shade < 0) {
+//                        shade = 0;
+//                    }
+//                    double objectColor = 255.0;
+//                    int c = (int) java.lang.Math.round(objectColor
+//                            * (AMBIENT_COEFFICIENT + DIFFUSE_COEFFICIENT * shade));
+//                    color = 0xff000000 |
+//                            (c << 16) |
+//                            (c << 8) |
+//                            (c);
+//                    String hexColor = Integer.toHexString(color);
+//                    System.out.println("Hex: " + hexColor);
+//                    System.out.println("");
+//                } else {
+//                    color = 0xff0000ff;
+//                }
+//                png.setPoint(x, y, color);
+//            }
+//        }
         png.display();
     }
 
