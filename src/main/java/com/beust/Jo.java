@@ -34,11 +34,8 @@ public class Jo {
 
     public static <From, To> List<To> extractFromList(List<From> objects,
             Function<? super From, ? extends Optional<To>> lambda) {
-//        List<To> result = objects.stream()
-//                .map(lambda)
-//                .filter(Optional::isPresent)
-//                .map(Optional::get)
-//                .collect(Collectors.toList());
         return null;
+//        return result;
+//    }
     }
 }

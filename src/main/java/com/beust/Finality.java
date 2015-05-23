@@ -29,7 +29,7 @@ public class Finality {
     }
 
     private static Map<String, Integer> populate() {
-        Map<String, Integer> map = new HashMap<>();
+        Map<String, Integer> map = new HashMap<String, Integer>();
         map.put("one", 1);
         map.put("two", 2);
         return map;

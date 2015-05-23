@@ -17,7 +17,8 @@ public class Lambda {
     }
 
     public static void main(String[] args) {
-        System.out.println(org.joda.time.format.DateTimeFormat.forPattern("MMddyyyy_hhmm").print(new org.joda.time.DateTime()));
+        System.out.println(org.joda.time.format.DateTimeFormat.forPattern("MMddyyyy_hhmm")
+                .print(new org.joda.time.DateTime()));
         Runnable r = () -> System.out.println("hello world");
         r.run();
     }

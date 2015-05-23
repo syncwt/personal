@@ -17,7 +17,7 @@ public class Main {
 
     private static final Sphere SPHERE = new Sphere(new Point(W, W, W), W);
     private static final Point CAMERA = new Point(W, W, -W);
-    private static final Point LIGHT = new Point(0, W, -50);
+    private static final Point LIGHT = new Point(W, 2*W, -50);
     private static final double AMBIENT_COEFFICIENT = 0.2;
     private static final double DIFFUSE_COEFFICIENT = 1 - AMBIENT_COEFFICIENT;
 

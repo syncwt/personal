@@ -1,14 +1,16 @@
 package com.beust;
 
-import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.google.common.collect.ImmutableList;
+import com.beust.jcommander.JCommander;
 
 
 public class A {
     final int a;
     public A(int a) {
         this.a = a;
+        JCommander j;
     }
     @Override
     public String toString() {
@@ -16,9 +18,10 @@ public class A {
     }
 
     public static void main(String[] args) {
-        @Nonnull
-        ImmutableList<Integer> l = ImmutableList.of(3, 5, 7, 1, 10, 9);
-        
+        Map<Integer, String> m = new HashMap<>();
+        m.put(1000, "a");
+        String s = m.get(1000);
+        System.out.println("s: " + s);
     }
 }
 
